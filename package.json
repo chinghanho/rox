@@ -1,0 +1,35 @@
+{
+  "name": "rox",
+  "version": "1.0.0",
+  "main": "config/boot.js",
+  "author": "CHH",
+  "license": "MIT",
+  "scripts": {
+    "start": "node_modules/nodemon/bin/nodemon.js config/boot.js",
+    "test": "PORT=5000 NODE_ENV=test node_modules/.bin/ava --watch"
+  },
+  "devDependencies": {
+    "ava": "^0.21.0",
+    "nodemon": "^1.11.0",
+    "supertest": "^3.0.0"
+  },
+  "dependencies": {
+    "base64url": "^2.0.0",
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.17.2",
+    "debug": "^2.6.8",
+    "ejs": "^2.5.7",
+    "express": "^4.15.3",
+    "jsonwebtoken": "^7.4.2",
+    "lodash": "^4.17.4",
+    "morgan": "^1.8.2",
+    "node-yaml": "^3.1.0",
+    "pg": "^7.1.0",
+    "sequelize": "^4.4.2",
+    "socket.io": "^2.0.3"
+  },
+  "apidoc": {
+    "title": "rox API document",
+    "url": ""
+  }
+}
