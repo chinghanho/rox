@@ -1,0 +1,111 @@
+/* apply a natural box layout model to all elements, but allowing components to change */
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  background-color: #e7ebef;
+  font: 12px/18px 'Open Sans',"Lucida Grande","Lucida Sans Unicode",Arial,Helvetica,Verdana,sans-serif;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+
+.pull-right {
+  float: right;
+}
+
+.login-head {
+  height: 226px;
+  background-color: #5d82a0;
+}
+
+.panel {
+  background-color: #fff;
+  margin: -101px auto 90px;
+}
+
+.panel-body {
+  padding: 44px 65px;
+}
+
+.alert {
+  background-color: #ff9494;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+}
+
+[v-cloak] {
+  display: none;
+}
+
+/* Sign in */
+
+
+.panel-signin {
+  max-width: 404px;
+}
+
+.panel-signin h3 {
+  color: hsl(0, 0%, 13%);
+  margin: 0 0 20px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.panel-signin p {
+  color: hsl(0, 0%, 60%);
+  margin: 15px 0 30px;
+  font-size: 13px;
+  line-height: 160%;
+}
+
+/* Chats */
+
+.panel-chats {
+  max-width: 880px;
+  min-height: 440px;
+}
+
+.panel-chats .sidebar {
+  float: left;
+  width: 30%;
+  min-height: 440px;
+  min-width: 263px;
+  border-right: 1px solid #cacfd2;
+}
+
+.panel-chats .main {
+  float: left;
+  width: 70%;
+}
+
+.panel-chats .sidebar .head {
+  padding: 15px;
+  border-bottom: 1px solid #cacfd2;
+}
+
+.panel-chats .sidebar .item {
+  padding: 15px;
+  background-color: #fff;
+}
+
+.panel-chats .main .head {
+  padding: 15px;
+  width: 100%;
+  border-bottom: 1px solid #cacfd2;
+}
+
+.panel-chats .btn-create-room {
+  font-size: 12px;
+  line-height: 1;
+}

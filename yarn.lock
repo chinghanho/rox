@@ -2600,6 +2600,10 @@ onetime@^2.0.0:
   dependencies:
     mimic-fn "^1.0.0"
 
+open-iconic@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/open-iconic/-/open-iconic-1.1.1.tgz#9dcfc8c7cd3c61cdb4a236b1a347894c97adc0c6"
+
 option-chain@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/option-chain/-/option-chain-1.0.0.tgz#938d73bd4e1783f948d34023644ada23669e30f2"

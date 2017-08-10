@@ -5,6 +5,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4
     },
+    type: {
+      type: DataTypes.ENUM,
+      values: ['peer', 'group'],
+      defaultValue: 'group'
+    },
     membersCount: {
       type: DataTypes.INTEGER,
       defaultValue: 0

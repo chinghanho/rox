@@ -13,17 +13,18 @@ const models = require('../models')
 exports.authenticate = (req, res, next) => {
   return models.User.findOne({ where: { login: req.body.login } })
     .then(user => {
-      if (user.isAuthenticate(req.body.password)) {
+      if (user && user.isAuthenticate(req.body.password)) {
         let payload = { id: user.id }
         let secret  = req.app.get('secret')
         let options = { algorithm: 'HS256' }
         let token   = jwt.sign(payload, secret, options)
         res.json({
+          status: 200,
           message: 'Have fun with your token. ;)',
           token: token
         })
       } else {
-        res.status(403).json({ message: 'Wrong password' })
+        res.status(403).json({ status: 403, message: 'incorrect login/password' })
       }
     })
     .catch(err => {

@@ -1,16 +1,13 @@
-const fs   = require('fs')
-const path = require('path')
-const app  = require('express')()
-const http = require('http').Server(app)
-const io   = require('socket.io')(http)
-const morgan = require('morgan')
-const ejs  = require('ejs').renderFile
+const fs         = require('fs')
+const path       = require('path')
+const express    = require('express')
+const app        = express()
+const http       = require('http').Server(app)
+const io         = require('socket.io')(http)
+const morgan     = require('morgan')
+const ejs        = require('ejs').renderFile
 const bodyParser = require('body-parser')
-const env  = process.env.NODE_ENV || 'development'
-
-fs.readdirSync(path.resolve(__dirname, 'initializers'))
-  .filter(file => file.indexOf(".") !== 0)
-  .forEach(file => require('./initializers/' + file))
+const env        = process.env.NODE_ENV || 'development'
 
 // Specify running port from environment variable, ex:
 //
@@ -29,22 +26,20 @@ if (env !== 'test') {
 }
 
 // Register ejs as template engine.
+app.set('views', path.join(__dirname, '../app/views'))
 app.engine('ejs', ejs)
+app.set('view engine', 'ejs')
 
 app.set('json spaces', 2)
 app.set('secret', require('./secret.json').secret)
 
 // mount the router
-app.use('/', require('./routes/pages'))
-app.use('/api/v1', require('./routes/users'))
-app.use('/api/v1', require('./routes/chats'))
+app.use(express.static(path.join(__dirname, '../public')))
+var routes = require('./router')
+routes(app)
 
-io.on('connection', socket => {
-  console.log('a user connected')
-  socket.on('disconnect', () => {
-    console.log('a user disconnected')
-  })
-})
+const connect = require('./io')
+connect(app, io)
 
 // Error handling
 app.use((err, req, res, next) => {

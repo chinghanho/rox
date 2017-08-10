@@ -1,0 +1,7 @@
+.btn {
+  font-size: 13px;
+  line-height: 20px;
+  display: inline-block;
+  color: hsl(0, 0%, 45%);
+  text-decoration: none;
+}

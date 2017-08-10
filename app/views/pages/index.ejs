@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>rox</title>
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/form.css">
+  <link rel="stylesheet" href="/css/button.css">
+  <link rel="stylesheet" href="/css/open-iconic.css">
+</head>
+<body>
+
+<div id="app" v-cloak>
+
+  <div class="login-head"></div>
+
+  <div class="panel panel-signin" v-if="!authenticated">
+    <div class="panel-body">
+
+      <h3>Sign in</h3>
+
+      <p>Please enter your login name and password.</p>
+
+      <div class="alert" v-if="error">
+        {{ error.message }}
+      </div>
+
+      <form>
+
+        <div class="form-group">
+          <label>login</label>
+          <input type="text" class="form-control" v-model="user.login">
+        </div>
+
+        <div class="form-group">
+          <label>password</label>
+          <input type="password" class="form-control" v-model="user.password">
+        </div>
+
+        <div class="clearfix">
+          <a href="#" class="btn pull-right" @click="login">Next ></a>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div v-if="authenticated">
+    <div class="panel panel-chats clearfix">
+      <div class="sidebar">
+        <div class="head">
+          <a href="#" class="btn btn-create-room">
+            <span class="oi" data-glyph="plus" title="plus" aria-hidden="true"></span>
+            Create room
+          </a>
+        </div>
+        <div class="item" v-for="chat in chats">
+          <div>{{ chat.uuid }}</div>
+        </div>
+      </div>
+      <div class="main">
+        <div class="head">
+          Main
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+  var vm = new Vue({
+    el: '#app',
+    data: {
+      error: null,
+      user: {
+        login: '',
+        password: ''
+      },
+      authenticated: false,
+      chats: []
+    },
+
+    created() {
+      let token = window.localStorage.getItem('token')
+      if (token) {
+        this.authenticated = true
+        this.initWebSocket(token)
+      }
+    },
+
+    methods: {
+      login() {
+        this.authenticate({
+          login: this.user.login,
+          password: this.user.password
+        })
+      },
+
+      authenticate({ login, password }) {
+        let options = {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ login, password })
+        }
+
+        fetch('/authenticate', options)
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 403) {
+            throw Error(data.message)
+          }
+
+          if (data.status === 200) {
+            this.authenticated = true
+            window.localStorage.setItem('token', data.token)
+            this.initWebSocket(data.token)
+          }
+        })
+        .catch(err => {
+          this.error = { message: err.message }
+        })
+      },
+
+      initWebSocket(token) {
+        var socket = io(`/?token=${token}`)
+
+        socket.on('error', message => {
+          this.error = { message }
+          this.authenticated = false
+          window.localStorage.removeItem('token')
+        })
+
+        socket.on('welcome', msg => {
+          console.log(msg)
+        })
+
+        socket.emit('getchats', chats => {
+          this.chats = chats
+        })
+      }
+    }
+  })
+</script>
+</body>
+</html>
