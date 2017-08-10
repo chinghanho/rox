@@ -3,7 +3,6 @@ const crypto = require('crypto')
 const base64SafeUrl = require('base64url')
 
 module.exports = function(sequelize, DataTypes) {
-
   var User = sequelize.define('User', {
     login: {
       type: DataTypes.STRING,
@@ -29,9 +28,12 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       validate: { notEmpty: true }
     }
-  }, {
-    tableName: 'Users'
   })
+
+  User.associate = function (models) {
+    User.hasMany(models.Chat, { as: 'OwnChats', foreignKey: 'userId' })
+    User.belongsToMany(models.Chat, { as: 'Chats', through: 'UsersChats', foreignKey: 'userId', otherKey: 'chatId' })
+  }
 
   /**
    * To hash a string.

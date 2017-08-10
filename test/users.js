@@ -3,82 +3,87 @@ const request = require('supertest')
 const app = require('../config/boot')
 const jwt = require('jsonwebtoken')
 
-test.before(async t => {
-  await app.db.User.sync({ force: true }).then(() => {
-    app.db.User.create({ login: 'foo', email: 'foo@bar.com', password: '12345678'})
+test.beforeEach(async t => {
+  let login = `foo${Math.floor(Math.random() * 100000)}`
+  let password = '12345678'
+  let user = await app.db.User.create({
+    login: login,
+    email: `${login}@bar.com`,
+    password: password
   })
-})
+  user.password = password
 
-test.after(async t => {
-  await app.db.sequelize.drop()
+  t.context.user = user
 })
 
 test('POST /authenticate', async t => {
-  const res = await request(app).post('/authenticate').send({ login: 'foo', password: '12345678' })
-  const user = await app.db.User.findOne({ where: { login: 'foo' } })
+  let user = t.context.user
+  const res = await request(app).post('/authenticate').send({ login: user.login, password: user.password })
+  const _user = await app.db.User.findOne({ where: { login: user.login } })
   const decoded = await jwt.verify(res.body.token, app.get('secret'))
   t.is(res.statusCode, 200)
-  t.is(decoded.id, user.id)
+  t.is(decoded.id, _user.id)
 })
 
 test('GET /api/v1', async t => {
-  const res = await makeRequest('/api/v1')
+  const res = await makeRequest('/api/v1', t.context)
   t.is(res.body.message, 'Hello world')
 })
 
 test('GET /api/v1/users', async t => {
-  t.plan(3)
-  const res = await makeRequest('/api/v1/users')
+  const res = await makeRequest('/api/v1/users', t.context)
   t.is(res.statusCode, 200)
-  t.is(res.body[0].login, 'foo')
-  t.is(res.body[0].email, 'foo@bar.com')
 })
 
 test('GET /api/v1/users/:id', async t => {
   t.plan(2)
-  const res = await makeRequest('/api/v1/users/1')
+  const res = await makeRequest(`/api/v1/users/${t.context.user.id}`, t.context)
   t.is(res.statusCode, 200)
-  t.is(res.body.login, 'foo')
+  t.is(res.body.login, t.context.user.login)
 })
 
 test('POST /api/v1/users with invalid login should be failed', async t => {
   t.plan(2)
 
-  const loginTooShort = await makeRequest('/api/v1/users', 'post',
+  const loginTooShort = await makeRequest('/api/v1/users', t.context, 'post',
     { login: 'a', email: 'woo@foo.bar', password: '12345678' })
 
-  const loginTooLong = await makeRequest('/api/v1/users', 'post',
-    { login: 'a'.repeat(21), email: 'woo@foo.bar', password: '12345678' })
+  const loginTooLong = await makeRequest('/api/v1/users', t.context, 'post',
+    { login: 'a'.repeat(21), email: 'qoo@foo.bar', password: '12345678' })
 
   t.is(loginTooShort.statusCode, 422)
   t.is(loginTooLong.statusCode, 422)
 })
 
 test('POST /api/v1/users with invalid email should be failed', async t => {
-  const res = await makeRequest('/api/v1/users', 'post',
+  const res = await makeRequest('/api/v1/users', t.context, 'post',
     { login: 'moo', email: 'localhost', password: '12345678' })
 
   t.is(res.statusCode, 422)
 })
 
 test('POST /api/v1/users with duplicated data sould respond with 422', async t => {
-  const res = await makeRequest('/api/v1/users', 'post',
-    { login: 'foo', email: 'foo@bar.com', password: '12345678' })
+  let contextUser = t.context.user
+  const res = await makeRequest('/api/v1/users', t.context, 'post',
+    { login: contextUser.login, email: contextUser.email, password: '12345678' })
 
   t.is(res.statusCode, 422)
 })
 
 test('POST /api/v1/users with valid params', async t => {
-  t.plan(2)
+  t.plan(3)
 
+  let login = `foo${Math.floor(Math.random() * 100000)}`
+  let password = '12345678'
   let user = {
-    login: 'bar',
-    email: 'bar@example.com',
-    password: '12345678'
+    login: login,
+    email: `${login}@bar.com`,
+    password: password
   }
 
-  const res = await makeRequest('/api/v1/users', 'post', user)
+  const res = await makeRequest('/api/v1/users', t.context, 'post', user)
 
+  t.is(res.statusCode, 200)
   t.is(res.body.login, user.login)
   t.is(res.body.email, user.email)
 })
@@ -86,7 +91,7 @@ test('POST /api/v1/users with valid params', async t => {
 test('PATCH /api/v1/users/:id with valid params', async t => {
   t.plan(3)
 
-  const res = await makeRequest('/api/v1/users/1', 'patch',
+  const res = await makeRequest('/api/v1/users/1', t.context, 'patch',
     { login: 'foobar', email: 'bar@foo.com' })
 
   t.is(res.statusCode, 200)
@@ -94,10 +99,12 @@ test('PATCH /api/v1/users/:id with valid params', async t => {
   t.is(res.body.email, 'bar@foo.com')
 })
 
-async function makeRequest(url, method = 'get', body) {
+async function makeRequest(url, context, method = 'get', body) {
+  let user = context.user
+
   const auth = await request(app)
     .post('/authenticate')
-    .send({ login: 'foo', password: '12345678' })
+    .send({ login: user.login, password: user.password })
 
   const req = request(app)[method](url)
     .set('Accept', 'application/json')

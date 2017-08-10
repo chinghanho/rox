@@ -47,7 +47,7 @@ exports.show = (req, res, next) => {
     .then(user => {
       user ? res.json(user) : res.json({ message: 'User not found' })
     })
-    .catch(err => res.json({ message: err.message }))
+    .catch(err => res.status(400).json({ message: err.message }))
 }
 
 /**
@@ -114,6 +114,29 @@ exports.update = (req, res, next) => {
       res.status(422)
       res.json({ message: err.message })
     })
+}
+
+/**
+ * @api {GET} /users/:id/chats Get chats from the user
+ * @apiVersion 1.0.0
+ * @apiName GetUserChats
+ * @apiGroup User
+ *
+ * @apiParam {Number} id The user ID.
+ *
+ * @apiError {Error 400} message
+ */
+exports.chats = (req, res, next) => {
+  let findingUser = models.User.findById(req.params.id)
+  let findingChats = findingUser.then(user => user.getChats())
+  Promise.all([findingUser, findingChats]).then(values => {
+    let chats = values[1]
+    chats = chats.map(chat => {
+      return pick(chat, ['id', 'userId', 'uuid', 'membersCount', 'updatedAt', 'createdAt'])
+    })
+    res.json(chats)
+  })
+  .catch(err => res.status(400).json({ message: err.message }))
 }
 
 /**

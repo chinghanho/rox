@@ -37,6 +37,7 @@ app.set('secret', require('./secret.json').secret)
 // mount the router
 app.use('/', require('./routes/pages'))
 app.use('/api/v1', require('./routes/users'))
+app.use('/api/v1', require('./routes/chats'))
 
 io.on('connection', socket => {
   console.log('a user connected')
