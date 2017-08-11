@@ -22,9 +22,15 @@ module.exports = function (app, io) {
     io.emit('welcome', 'global welcome')
     socket.emit('welcome', 'Hello socket.io')
 
-    socket.on('getchats', (next) => {
+    socket.on('getchats', next => {
       models.User.findById(socket._user.id).then(user => {
         user.getChats().then(chats => next(chats))
+      })
+    })
+
+    socket.on('createchat', next => {
+      models.User.findById(socket._user.id).then(user => {
+        user.createChat({ userId: user.id }).then(chat => next(chat))
       })
     })
 

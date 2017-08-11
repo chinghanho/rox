@@ -48,18 +48,20 @@
     <div class="panel panel-chats clearfix">
       <div class="sidebar">
         <div class="head">
-          <a href="#" class="btn btn-create-room">
+          <a href="#" class="btn btn-create-room" @click="createRoom">
             <span class="oi" data-glyph="plus" title="plus" aria-hidden="true"></span>
             Create room
           </a>
         </div>
-        <div class="item" v-for="chat in chats">
-          <div>{{ chat.uuid }}</div>
+        <div class="items">
+          <div class="item" :class="{ 'active': activeChatIndex === index }" v-for="(chat, index) in chats" @click="selectChat(index)">
+            <div>{{ chat.uuid }}</div>
+          </div>
         </div>
       </div>
       <div class="main">
-        <div class="head">
-          Main
+        <div class="head" v-if="activeChatIndex !== null">
+          Talking in {{ chats[activeChatIndex].uuid }}
         </div>
       </div>
     </div>
@@ -80,7 +82,8 @@
         password: ''
       },
       authenticated: false,
-      chats: []
+      chats: [],
+      activeChatIndex: null
     },
 
     created() {
@@ -89,6 +92,12 @@
         this.authenticated = true
         this.initWebSocket(token)
       }
+
+      window.addEventListener('keyup', event => {
+        if (event.keyCode === 27) {
+          this.activeChatIndex = null
+        }
+      })
     },
 
     methods: {
@@ -128,21 +137,32 @@
       },
 
       initWebSocket(token) {
-        var socket = io(`/?token=${token}`)
+        this.socket = io(`/?token=${token}`)
 
-        socket.on('error', message => {
+        this.socket.on('error', message => {
           this.error = { message }
           this.authenticated = false
           window.localStorage.removeItem('token')
         })
 
-        socket.on('welcome', msg => {
+        this.socket.on('welcome', msg => {
           console.log(msg)
         })
 
-        socket.emit('getchats', chats => {
+        this.socket.emit('getchats', chats => {
           this.chats = chats
         })
+      },
+
+      createRoom(event) {
+        event.preventDefault()
+        this.socket.emit('createchat', chat => {
+          this.chats.push(chat)
+        })
+      },
+
+      selectChat(index) {
+        this.activeChatIndex = index
       }
     }
   })

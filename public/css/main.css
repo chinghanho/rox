@@ -32,6 +32,7 @@ body {
 .panel {
   background-color: #fff;
   margin: -101px auto 90px;
+  border: 1px solid #c3c3c3;
 }
 
 .panel-body {
@@ -74,10 +75,11 @@ body {
 .panel-chats {
   max-width: 880px;
   min-height: 440px;
+  display: flex;
 }
 
 .panel-chats .sidebar {
-  float: left;
+  flex-shrink:0;
   width: 30%;
   min-height: 440px;
   min-width: 263px;
@@ -85,8 +87,8 @@ body {
 }
 
 .panel-chats .main {
-  float: left;
-  width: 70%;
+  flex-grow: 1;
+  background-image: url(../images/bg.jpg);
 }
 
 .panel-chats .sidebar .head {
@@ -94,14 +96,30 @@ body {
   border-bottom: 1px solid #cacfd2;
 }
 
+.panel-chats .sidebar .items {
+  max-height: 603px;
+  overflow-y: scroll;
+}
+
 .panel-chats .sidebar .item {
   padding: 15px;
   background-color: #fff;
+  cursor: pointer;
+}
+
+.panel-chats .sidebar .item:hover {
+  background-color: #ebebeb;
+}
+
+.panel-chats .sidebar .item.active {
+  background-color: #429dd7;
+  color: #fff;
 }
 
 .panel-chats .main .head {
   padding: 15px;
   width: 100%;
+  background-color: #fff;
   border-bottom: 1px solid #cacfd2;
 }
 
