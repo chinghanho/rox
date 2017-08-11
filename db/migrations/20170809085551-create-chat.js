@@ -8,6 +8,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      title: {
+        type: Sequelize.STRING,
+        allowNull: true
+      },
       type: {
         type: Sequelize.ENUM('peer', 'group'),
         allowNull: false

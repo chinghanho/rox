@@ -1,5 +1,9 @@
 module.exports = function(sequelize, DataTypes) {
   var Chat = sequelize.define('Chat', {
+    title: {
+      type: DataTypes.STRING,
+      defaultValue: ''
+    },
     userId: DataTypes.INTEGER,
     uuid: {
       type: DataTypes.UUID,

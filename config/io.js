@@ -29,7 +29,7 @@ module.exports = function (app, io) {
 
     socket.on('createchat', next => {
       models.User.findById(socket._user.id).then(user => {
-        user.createChat({ userId: user.id }).then(chat => {
+        user.createChat({ userId: user.id, membersCount: 1 }).then(chat => {
           socket.join(chat.uuid, () => {
             next(chat)
           })
@@ -38,10 +38,15 @@ module.exports = function (app, io) {
     })
 
     socket.on('joinroom', (uuid, next) => {
-      models.Chat.findOne({ where: { uuid } }).then(chat => {
-        socket.join(chat.uuid, () => {
-          next(chat)
-        })
+      let findingChat = models.Chat.findOne({ where: { uuid } })
+      let findingUser = models.User.findById(socket._user.id)
+
+      Promise.all([findingChat, findingUser]).then(values => {
+        let chat = values[0]
+        let user = values[1]
+        chat.addMembers([user])
+          .then(() => chat.increment('membersCount'))
+          .then(() => socket.join(chat.uuid, () => next(chat)))
       })
     })
 

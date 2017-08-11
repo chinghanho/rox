@@ -200,6 +200,7 @@
       createRoom(event) {
         event.preventDefault()
         this.socket.emit('createchat', chat => {
+          chat.messages = []
           this.chats.push(chat)
         })
       },
