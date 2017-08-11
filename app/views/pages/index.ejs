@@ -60,12 +60,40 @@
         </div>
       </div>
       <div class="main">
-        <div class="head" v-if="activeChatIndex !== null">
-          Talking in {{ chats[activeChatIndex].uuid }}
+        <div class="head" v-if="activeChat">
+          Talking in {{ activeChat.uuid }}
+        </div>
+
+        <div class="body" v-if="activeChat">
+          <div v-for="message in activeChat.messages" class="message">
+            <div class="bubble right">{{ message }}</div>
+          </div>
+        </div>
+
+        <div class="footer" v-if="activeChat">
+          <form @submit="sendMessage">
+            <div class="footer-input-wrap">
+              <input type="text" class="form-control" placeholder="Write a message..." v-model="activeChat.message">
+            </div>
+            <button type="submit" class="btn-reset send-message">
+              <span class="oi" data-glyph="location"></span>
+            </button>
+          </form>
         </div>
       </div>
     </div>
   </div>
+
+  <svg height="0" width="0">
+    <defs>
+      <clipPath id="left-droplet">
+        <path d="M 10,0 A 10,10 0 0 1 0,10 H 16 V 0 Z">
+      </clipPath>
+      <clipPath id="right-droplet">
+        <path d="M 6,0 A 10,10 0 0 0 16,10 H 0 V 0 Z">
+      </clipPath>
+    </defs>
+  </svg>
 
 </div>
 
@@ -84,6 +112,12 @@
       authenticated: false,
       chats: [],
       activeChatIndex: null
+    },
+
+    computed: {
+      activeChat() {
+        return this.chats[this.activeChatIndex]
+      }
     },
 
     created() {
@@ -150,6 +184,7 @@
         })
 
         this.socket.emit('getchats', chats => {
+          chats.map(chat => chat.messages = [])
           this.chats = chats
         })
       },
@@ -163,6 +198,13 @@
 
       selectChat(index) {
         this.activeChatIndex = index
+      },
+
+      sendMessage(event) {
+        event.preventDefault()
+        Vue.set(this.activeChat.messages, this.activeChat.messages.length, this.activeChat.message)
+        this.activeChat.message = ''
+        // this.socket.emit('sendmessage')
       }
     }
   })
