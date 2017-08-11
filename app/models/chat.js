@@ -35,5 +35,10 @@ module.exports = function(sequelize, DataTypes) {
     return this.increment('membersCount')
   }
 
+  Chat.prototype.touch = function () {
+    this.setDataValue('updatedAt', Date.now())
+    return this
+  }
+
   return Chat
 }

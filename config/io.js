@@ -51,7 +51,9 @@ module.exports = function (app, io) {
     })
 
     socket.on('sendmessage', (uuid, message) => {
-      io.to(uuid).emit('newmessage', message)
+      models.Chat.findOne({ where: { uuid } })
+        .then(chat => chat.touch().save())
+        .then(() => io.to(uuid).emit('newmessage', message))
     })
 
     socket.on('disconnect', () => {
