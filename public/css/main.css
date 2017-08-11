@@ -113,6 +113,14 @@ body {
   border-bottom: 1px solid #cacfd2;
 }
 
+.panel-chats .sidebar .head .btn {
+  margin-right: 8px;
+}
+
+.panel-chats .sidebar .head .btn:last-child {
+  margin-right: 0;
+}
+
 .panel-chats .sidebar .items {
   max-height: 603px;
   overflow-y: scroll;
@@ -133,7 +141,8 @@ body {
   color: #fff;
 }
 
-.panel-chats .btn-create-room {
+.panel-chats .btn-create-room,
+.panel-chats .btn-join-room {
   font-size: 12px;
   line-height: 1;
 }

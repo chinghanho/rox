@@ -52,6 +52,11 @@
             <span class="oi" data-glyph="plus" title="plus" aria-hidden="true"></span>
             Create room
           </a>
+
+          <a href="#" class="btn btn-join-room" @click="joinRoom">
+            <span class="oi" data-glyph="account-login" title="account-login" aria-hidden="true"></span>
+            Join room
+          </a>
         </div>
         <div class="items">
           <div class="item" :class="{ 'active': activeChatIndex === index }" v-for="(chat, index) in chats" @click="selectChat(index)">
@@ -64,7 +69,7 @@
           Talking in {{ activeChat.uuid }}
         </div>
 
-        <div class="body" v-if="activeChat">
+        <div class="body" v-if="activeChat" ref="messages">
           <div v-for="message in activeChat.messages" class="message">
             <div class="bubble right">{{ message }}</div>
           </div>
@@ -179,8 +184,11 @@
           window.localStorage.removeItem('token')
         })
 
-        this.socket.on('welcome', msg => {
-          console.log(msg)
+        this.socket.on('newmessage', message => {
+          console.log('newmessage', message)
+          this.activeChat.messages.push(message)
+          let $messages = this.$refs['messages']
+          setTimeout(() => $messages.scrollTop = $messages.scrollHeight, 0)
         })
 
         this.socket.emit('getchats', chats => {
@@ -196,15 +204,24 @@
         })
       },
 
+      joinRoom(event) {
+        event.preventDefault()
+        let uuid = window.prompt('Please the Room UUID:')
+        this.socket.emit('joinroom', uuid, chat => {
+          chat.messages = []
+          this.chats.push(chat)
+          this.activeChatIndex = this.chats.length
+        })
+      },
+
       selectChat(index) {
         this.activeChatIndex = index
       },
 
       sendMessage(event) {
         event.preventDefault()
-        Vue.set(this.activeChat.messages, this.activeChat.messages.length, this.activeChat.message)
+        this.socket.emit('sendmessage', this.activeChat.uuid, this.activeChat.message)
         this.activeChat.message = ''
-        // this.socket.emit('sendmessage')
       }
     }
   })

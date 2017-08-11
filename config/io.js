@@ -4,9 +4,7 @@ const jwt = require('jsonwebtoken')
 module.exports = function (app, io) {
 
   io.use((socket, next) => {
-    let token = socket.handshake.query.token
-
-    jwt.verify(token, app.get('secret'), (err, decoded) => {
+    jwt.verify(socket.handshake.query.token, app.get('secret'), (err, decoded) => {
       if (err) {
         return next(new Error(err.message))
       }
@@ -17,21 +15,38 @@ module.exports = function (app, io) {
 
   io.on('connection', socket => {
 
-    console.log('user create connection')
-
-    io.emit('welcome', 'global welcome')
-    socket.emit('welcome', 'Hello socket.io')
-
     socket.on('getchats', next => {
       models.User.findById(socket._user.id).then(user => {
-        user.getChats().then(chats => next(chats))
+        user.getChats().then(chats => {
+          chats.forEach(chat => {
+            socket.join(chat.uuid, () => {
+              next(chats)
+            })
+          })
+        })
       })
     })
 
     socket.on('createchat', next => {
       models.User.findById(socket._user.id).then(user => {
-        user.createChat({ userId: user.id }).then(chat => next(chat))
+        user.createChat({ userId: user.id }).then(chat => {
+          socket.join(chat.uuid, () => {
+            next(chat)
+          })
+        })
       })
+    })
+
+    socket.on('joinroom', (uuid, next) => {
+      models.Chat.findOne({ where: { uuid } }).then(chat => {
+        socket.join(chat.uuid, () => {
+          next(chat)
+        })
+      })
+    })
+
+    socket.on('sendmessage', (uuid, message) => {
+      io.to(uuid).emit('newmessage', message)
     })
 
     socket.on('disconnect', () => {
