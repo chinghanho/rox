@@ -83,7 +83,6 @@
         })
 
         this.socket.on('newmessage', message => {
-          console.log('newmessage', message)
           this.activeChat.messages.push(message)
           let $messages = this.$refs['messages']
           setTimeout(() => $messages.scrollTop = $messages.scrollHeight, 0)

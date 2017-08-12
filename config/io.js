@@ -1,5 +1,6 @@
 const models = require('../app/models')
 const jwt = require('jsonwebtoken')
+const msg = require('../lib/message')
 
 module.exports = function (app, io) {
 
@@ -53,7 +54,7 @@ module.exports = function (app, io) {
     socket.on('sendmessage', (uuid, message) => {
       models.Chat.findOne({ where: { uuid } })
         .then(chat => chat.touch().save())
-        .then(() => io.to(uuid).emit('newmessage', message))
+        .then(() => io.to(uuid).emit('newmessage', msg({ text: message, sender_id: socket._user.id })))
     })
 
     socket.on('disconnect', () => {

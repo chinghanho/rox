@@ -17,6 +17,15 @@ module.exports = {
       passwordDigest: {
         type: Sequelize.STRING
       },
+      active: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      lastSeenAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Date.now()
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

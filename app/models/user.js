@@ -27,6 +27,14 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false,
       validate: { notEmpty: true }
+    },
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    lastSeenAt: {
+      type: DataTypes.DATE,
+      defaultValue: Date.now()
     }
   })
 
