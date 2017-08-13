@@ -1,0 +1,9 @@
+.chatroom-enter-active,
+.chatroom-leave-active {
+  transition: opacity 0.5s;
+}
+
+.chatroom-enter,
+.chatroom-leave-to {
+  opacity: 0
+}

@@ -12,7 +12,8 @@
       },
       authenticated: false,
       chats: [],
-      activeChatIndex: null
+      activeChatIndex: null,
+      chatSettingsOpened: false
     },
 
     computed: {
@@ -77,6 +78,7 @@
         this.socket = io(`/?token=${token}`)
 
         this.socket.on('error', message => {
+          console.error(message)
           this.error = { message }
           this.authenticated = false
           window.localStorage.removeItem('token')

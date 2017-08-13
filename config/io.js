@@ -16,6 +16,10 @@ module.exports = function (app, io) {
 
   io.on('connection', socket => {
 
+    models.User.findById(socket._user.id).then(user => {
+      user.touch(true)
+    })
+
     socket.on('getchats', next => {
       models.User.findById(socket._user.id).then(user => {
         user.getChats().then(chats => {
@@ -58,7 +62,9 @@ module.exports = function (app, io) {
     })
 
     socket.on('disconnect', () => {
-      console.log('a user disconnected')
+      models.User.findById(socket._user.id).then(user => {
+        user.touch(false)
+      })
     })
   })
 

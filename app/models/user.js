@@ -67,5 +67,10 @@ module.exports = function(sequelize, DataTypes) {
     return bcrypt.compareSync(token, this.passwordDigest)
   }
 
+  User.prototype.touch = function (active) {
+    let now = Date.now()
+    return this.update({ active, lastSeenAt: now, updatedAt: now })
+  }
+
   return User
 }

@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/css/form.css">
   <link rel="stylesheet" href="/css/button.css">
   <link rel="stylesheet" href="/css/open-iconic.css">
+  <link rel="stylesheet" href="/css/transition.css">
 </head>
 <body>
 
@@ -65,25 +66,36 @@
         </div>
       </div>
       <div class="main">
-        <div class="head" v-if="activeChat">
-          Talking in {{ activeChat.uuid }}
-        </div>
-
-        <div class="body" v-if="activeChat" ref="messages">
-          <div v-for="message in activeChat.messages" class="message">
-            <div class="bubble right">{{ message.text }}</div>
+        <div class="inner" v-if="!chatSettingsOpened">
+          <div class="head" v-if="activeChat" @click="chatSettingsOpened = !chatSettingsOpened">
+            Talking in {{ activeChat.uuid }}
           </div>
-        </div>
 
-        <div class="footer" v-if="activeChat">
-          <form @submit="sendMessage">
-            <div class="footer-input-wrap">
-              <input type="text" class="form-control" placeholder="Write a message..." v-model="activeChat.message">
+          <div class="body" v-if="activeChat" ref="messages">
+            <div v-for="message in activeChat.messages" class="message">
+              <div class="bubble right">{{ message.text }}</div>
             </div>
-            <button type="submit" class="btn-reset send-message">
+          </div>
+
+          <div class="footer" v-if="activeChat">
+            <form @submit="sendMessage">
+              <div class="footer-input-wrap">
+                <input type="text" class="form-control" placeholder="Write a message..." v-model="activeChat.message">
+              </div>
+              <button type="submit" class="btn-reset send-message">
               <span class="oi" data-glyph="location"></span>
             </button>
-          </form>
+            </form>
+          </div>
+        </div>
+        <div class="chat-settings" v-else>
+          <div v-if="activeChat">
+            <div class="head">
+              <div @click="chatSettingsOpened = !chatSettingsOpened">
+                <span class="oi" data-glyph="chevron-left"></span> Back
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
