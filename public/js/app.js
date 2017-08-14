@@ -103,6 +103,9 @@
       createRoom(event) {
         event.preventDefault()
         let title = window.prompt('Please enter the room title:')
+        if (title === '' || title === undefined) {
+          return window.alert('Failed! Room title can not be blank.')
+        }
         this.socket.emit('createchat', title, chat => {
           chat.messages = []
           Vue.set(this.chats, chat.uuid, chat)
@@ -112,6 +115,9 @@
       joinRoom(event) {
         event.preventDefault()
         let uuid = window.prompt('Please enter the room UUID:')
+        if (uuid === '' || uuid === undefined) {
+          return window.alert('Failed! Room UUID can not be blank.')
+        }
         this.socket.emit('joinroom', uuid, chat => {
           chat.messages = []
           Vue.set(this.chats, chat.uuid, chat)
