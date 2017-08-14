@@ -2,7 +2,16 @@
   margin-bottom: 4px;
 }
 
-.message .bubble {
+.message.human {
+  text-align: right;
+  margin-right: 14px;
+}
+
+.message.sys {
+  text-align: center;
+}
+
+.message.human .bubble {
   position: relative;
   display: inline-block;
   background-color: #effdde;
@@ -11,7 +20,7 @@
   border-radius: 6px;
 }
 
-.message .bubble:after {
+.message.human .bubble:after {
   position: absolute;
   content: '';
   bottom: 0;
@@ -25,7 +34,10 @@
   clip-path: url(#right-droplet);
 }
 
-.message .bubble.right {
-  float: right;
-  margin-right: 14px;
+.message.sys .bubble {
+  background: #96a2ab;
+  border-radius: 13px;
+  padding: 5px 10px;
+  display: inline-block;
+  color: #fff;
 }

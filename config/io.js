@@ -52,13 +52,14 @@ module.exports = function (app, io) {
         chat.addMembers([user])
           .then(() => chat.increment('membersCount'))
           .then(() => socket.join(chat.uuid, () => next(chat)))
+          .then(() => io.to(chat.uuid).emit('newmessage', msg({ text: `${user.login} joined this room`, chatID: chat.uuid, senderID: null, type: 'sys' })))
       })
     })
 
     socket.on('sendmessage', (uuid, message) => {
       models.Chat.findOne({ where: { uuid } })
         .then(chat => chat.touch().save())
-        .then(() => io.to(uuid).emit('newmessage', msg({ text: message, sender_id: socket._user.id })))
+        .then(chat => io.to(uuid).emit('newmessage', msg({ text: message, chatID: chat.uuid, senderID: socket._user.id, type: 'human' })))
     })
 
     socket.on('disconnect', () => {

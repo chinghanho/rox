@@ -11,14 +11,14 @@
         password: ''
       },
       authenticated: false,
-      chats: [],
-      activeChatIndex: null,
+      chats: {},
+      activeChatUUID: null,
       chatSettingsOpened: false
     },
 
     computed: {
       activeChat() {
-        return this.chats[this.activeChatIndex]
+        return this.chats[this.activeChatUUID]
       }
     },
 
@@ -31,7 +31,7 @@
 
       window.addEventListener('keyup', event => {
         if (event.keyCode === 27) {
-          this.activeChatIndex = null
+          this.activeChatUUID = null
         }
       })
     },
@@ -85,14 +85,18 @@
         })
 
         this.socket.on('newmessage', message => {
-          this.activeChat.messages.push(message)
+          let chatID = message.chatID
+          let chat   = this.chats[chatID]
+          chat.messages.push(message)
           let $messages = this.$refs['messages']
           setTimeout(() => $messages.scrollTop = $messages.scrollHeight, 0)
         })
 
         this.socket.emit('getchats', chats => {
           chats.map(chat => chat.messages = [])
-          this.chats = chats
+          chats.forEach(chat => {
+            Vue.set(this.chats, chat.uuid, chat)
+          })
         })
       },
 
@@ -100,7 +104,7 @@
         event.preventDefault()
         this.socket.emit('createchat', chat => {
           chat.messages = []
-          this.chats.push(chat)
+          Vue.set(this.chats, chat.uuid, chat)
         })
       },
 
@@ -109,13 +113,13 @@
         let uuid = window.prompt('Please the Room UUID:')
         this.socket.emit('joinroom', uuid, chat => {
           chat.messages = []
-          this.chats.push(chat)
-          this.activeChatIndex = this.chats.length
+          Vue.set(this.chats, chat.uuid, chat)
+          this.activeChatUUID = chat.uuid
         })
       },
 
-      selectChat(index) {
-        this.activeChatIndex = index
+      selectChat(uuid) {
+        this.activeChatUUID = uuid
       },
 
       sendMessage(event) {

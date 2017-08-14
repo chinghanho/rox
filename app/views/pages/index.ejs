@@ -64,8 +64,11 @@
           </a>
         </div>
         <div class="items">
-          <div class="item" :class="{ 'active': activeChatIndex === index }" v-for="(chat, index) in chats" @click="selectChat(index)">
-            <div>{{ chat.uuid }}</div>
+          <div class="item"
+              v-for="(chat, uuid) in chats"
+              :class="{ 'active': activeChatUUID === uuid }"
+              @click="selectChat(uuid)">
+            <div>{{ uuid }}</div>
           </div>
         </div>
       </div>
@@ -77,8 +80,9 @@
           </div>
 
           <div class="body" v-if="activeChat" ref="messages">
-            <div v-for="message in activeChat.messages" class="message">
-              <div class="bubble right">{{ message.text }}</div>
+            <div v-for="message in activeChat.messages" class="message"
+                :class="{ 'sys': message.type === 'sys', 'human': message.type === 'human' }">
+              <div class="bubble">{{ message.text }}</div>
             </div>
           </div>
 
