@@ -108,7 +108,8 @@
 
       createRoom(event) {
         event.preventDefault()
-        this.socket.emit('createchat', chat => {
+        let title = window.prompt('Please enter the room title:')
+        this.socket.emit('createchat', title, chat => {
           chat.messages = []
           Vue.set(this.chats, chat.uuid, chat)
         })
@@ -116,7 +117,7 @@
 
       joinRoom(event) {
         event.preventDefault()
-        let uuid = window.prompt('Please the Room UUID:')
+        let uuid = window.prompt('Please enter the room UUID:')
         this.socket.emit('joinroom', uuid, chat => {
           chat.messages = []
           Vue.set(this.chats, chat.uuid, chat)

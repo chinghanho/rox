@@ -32,9 +32,9 @@ module.exports = function (app, io) {
       })
     })
 
-    socket.on('createchat', next => {
+    socket.on('createchat', (title, next) => {
       models.User.findById(socket._user.id).then(user => {
-        user.createChat({ userId: user.id, membersCount: 1 }).then(chat => {
+        user.createChat({ userId: user.id, title, membersCount: 1 }).then(chat => {
           socket.join(chat.uuid, () => {
             next(chat)
           })

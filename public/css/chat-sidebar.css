@@ -35,6 +35,7 @@
 }
 
 .panel-chats .sidebar .item .item-head {
+  font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -68,7 +68,10 @@
               v-for="(chat, uuid) in chats"
               :class="{ 'active': activeChatUUID === uuid }"
               @click="selectChat(uuid)">
-            <div class="item-head">{{ uuid }}</div>
+            <div class="item-head">
+              <span class="oi" data-glyph="people"></span>
+              {{ chat.title || chat.uuid }}
+            </div>
             <div class="item-subhead">{{ getLastMessage(uuid) }}</div>
           </div>
         </div>
