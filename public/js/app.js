@@ -37,6 +37,12 @@
     },
 
     methods: {
+      getLastMessage(chatID) {
+        let messages = this.chats[chatID].messages
+        let lastMessage = messages[messages.length - 1]
+        return lastMessage ? lastMessage.text : 'Last message content'
+      },
+
       login(event) {
         event.preventDefault()
         this.authenticate({

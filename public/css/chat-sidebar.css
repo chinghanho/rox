@@ -34,6 +34,12 @@
   background-color: #ebebeb;
 }
 
+.panel-chats .sidebar .item .item-head {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .panel-chats .sidebar .item.active {
   background-color: #429dd7;
   color: #fff;

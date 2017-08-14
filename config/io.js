@@ -51,8 +51,16 @@ module.exports = function (app, io) {
         let user = values[1]
         chat.addMembers([user])
           .then(() => chat.increment('membersCount'))
-          .then(() => socket.join(chat.uuid, () => next(chat)))
-          .then(() => io.to(chat.uuid).emit('newmessage', msg({ text: `${user.login} joined this room`, chatID: chat.uuid, senderID: null, type: 'sys' })))
+          .then(() => socket.join(chat.uuid, () => {
+            next(chat)
+            io.to(chat.uuid)
+              .emit('newmessage', msg({
+                text: `${user.login} joined this room`,
+                chatID: chat.uuid,
+                senderID: null,
+                type: 'sys'
+              }))
+          }))
       })
     })
 
