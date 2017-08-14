@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/form.css">
   <link rel="stylesheet" href="/css/button.css">
+  <link rel="stylesheet" href="/css/chat.css">
+  <link rel="stylesheet" href="/css/chat-content.css">
+  <link rel="stylesheet" href="/css/chat-sidebar.css">
+  <link rel="stylesheet" href="/css/message.css">
   <link rel="stylesheet" href="/css/open-iconic.css">
   <link rel="stylesheet" href="/css/transition.css">
 </head>
@@ -68,7 +72,8 @@
       <div class="main">
         <div class="inner" v-if="!chatSettingsOpened">
           <div class="head" v-if="activeChat" @click="chatSettingsOpened = !chatSettingsOpened">
-            Talking in {{ activeChat.uuid }}
+            <div class="head-title">Talking in {{ activeChat.uuid }}</div>
+            <div class="head-subtitle">Member Count: {{ activeChat.membersCount }}</div>
           </div>
 
           <div class="body" v-if="activeChat" ref="messages">

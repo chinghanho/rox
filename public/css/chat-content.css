@@ -1,0 +1,36 @@
+.panel-chats .main {
+  width: 100%;
+  background-image: url(../images/bg.jpg);
+}
+
+.panel-chats .main .inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-chats .main .head {
+  padding: 6px 15px;
+  width: 100%;
+  background-color: #fff;
+  border-bottom: 1px solid #cacfd2;
+  cursor: pointer;
+}
+
+.panel-chats .main .head .head-title {
+  //
+}
+
+.panel-chats .main .head .head-subtitle {
+  color: #969696;
+}
+
+.panel-chats .main .footer {
+  background-color: #fff;
+  padding: 10px 15px;
+  position: relative;
+  margin-top: auto;
+}

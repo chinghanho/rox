@@ -1,0 +1,40 @@
+.panel-chats .sidebar {
+  flex-shrink:0;
+  width: 30%;
+  min-height: 440px;
+  min-width: 263px;
+  border-right: 1px solid #cacfd2;
+}
+
+.panel-chats .sidebar .head {
+  padding: 15px;
+  border-bottom: 1px solid #cacfd2;
+}
+
+.panel-chats .sidebar .head .btn {
+  margin-right: 8px;
+}
+
+.panel-chats .sidebar .head .btn:last-child {
+  margin-right: 0;
+}
+
+.panel-chats .sidebar .items {
+  max-height: 603px;
+  overflow-y: scroll;
+}
+
+.panel-chats .sidebar .item {
+  padding: 15px;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.panel-chats .sidebar .item:hover {
+  background-color: #ebebeb;
+}
+
+.panel-chats .sidebar .item.active {
+  background-color: #429dd7;
+  color: #fff;
+}
