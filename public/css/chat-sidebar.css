@@ -45,3 +45,11 @@
   background-color: #429dd7;
   color: #fff;
 }
+
+.panel-chats .sidebar .item .item-subhead .item-user {
+  color: #1da0df;
+}
+
+.panel-chats .sidebar .item.active .item-subhead .item-user {
+  color: #fff;
+}

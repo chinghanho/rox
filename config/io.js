@@ -9,8 +9,10 @@ module.exports = function (app, io) {
       if (err) {
         return next(new Error(err.message))
       }
-      socket._user = decoded
-      return next()
+      models.User.findById(decoded.id).then(user => {
+        socket._user = user
+        return next()
+      })
     })
   })
 
@@ -57,7 +59,7 @@ module.exports = function (app, io) {
               .emit('newmessage', msg({
                 text: `${user.login} joined this room`,
                 chatID: chat.uuid,
-                senderID: null,
+                sender: null,
                 type: 'sys'
               }))
           }))
@@ -67,7 +69,18 @@ module.exports = function (app, io) {
     socket.on('sendmessage', (uuid, message) => {
       models.Chat.findOne({ where: { uuid } })
         .then(chat => chat.touch().save())
-        .then(chat => io.to(uuid).emit('newmessage', msg({ text: message, chatID: chat.uuid, senderID: socket._user.id, type: 'human' })))
+        .then(chat => {
+          io.to(uuid)
+            .emit('newmessage', msg({
+              text: message,
+              chatID: chat.uuid,
+              sender: {
+                id: socket._user.id,
+                login: socket._user.login
+              },
+              type: 'human'
+            }))
+        })
     })
 
     socket.on('disconnect', () => {
