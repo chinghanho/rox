@@ -73,7 +73,10 @@
               {{ chat.title || chat.uuid }}
             </div>
             <div class="item-subhead" v-if="chat.messages[chat.messages.length - 1]">
-              <span class="item-user">{{ chat.messages[chat.messages.length - 1].sender.login }}:</span>
+              <span class="item-user"
+                  v-if="chat.messages[chat.messages.length - 1].sender">
+                {{ chat.messages[chat.messages.length - 1].sender.login }}:
+              </span>
               <span class="item-text">{{ chat.messages[chat.messages.length - 1].text }}</span>
             </div>
             <div class="item-subhead" v-else>Last message content</div>
@@ -90,7 +93,10 @@
           <div class="body" v-if="activeChat" ref="messages">
             <div v-for="message in activeChat.messages" class="message"
                 :class="{ 'sys': message.type === 'sys', 'human': message.type === 'human' }">
-              <div class="bubble">{{ message.text }}</div>
+              <div class="bubble">
+                <span v-if="message.sender">{{ message.sender.login }}:</span>
+                <span>{{ message.text }}</span>
+              </div>
             </div>
           </div>
 
