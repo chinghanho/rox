@@ -10,7 +10,7 @@ module.exports = {
       },
       title: {
         type: Sequelize.STRING,
-        allowNull: true
+        allowNull: false
       },
       type: {
         type: Sequelize.ENUM('peer', 'group'),
