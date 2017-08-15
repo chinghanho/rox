@@ -24,7 +24,7 @@ module.exports = function (app, io) {
 
     socket.on('getchats', next => {
       models.User.findById(socket._user.id).then(user => {
-        user.getChats().then(chats => {
+        user.getChats({ include: [{ model: models.User, as: 'Members' }] }).then(chats => {
           chats.forEach(chat => {
             socket.join(chat.uuid, () => {
               next(chats)
