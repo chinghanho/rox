@@ -53,7 +53,7 @@ module.exports = function (app, io) {
       })
     })
 
-    socket.on('sendmessage', (uuid, message) => {
+    socket.on('messages.sendtext', (uuid, message) => {
       let user = socket.user
       models.Chat.findOne({ where: { uuid } })
         .then(chat => chat.touch().save())

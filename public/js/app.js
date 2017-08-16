@@ -132,7 +132,7 @@
 
       sendMessage(event) {
         event.preventDefault()
-        this.socket.emit('sendmessage', this.activeChat.uuid, this.activeChat.message)
+        this.socket.emit('messages.sendtext', this.activeChat.uuid, this.activeChat.message)
         this.activeChat.message = ''
       }
     }
