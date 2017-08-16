@@ -11,6 +11,7 @@
         password: ''
       },
       authenticated: false,
+      users: {},
       chats: {},
       activeChatUUID: null,
       chatSettingsOpened: false

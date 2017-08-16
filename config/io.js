@@ -10,7 +10,8 @@ module.exports = function (app, io) {
         return next(new Error(err.message))
       }
       models.User.findById(decoded.id).then(user => {
-        socket._user = user
+        user.touch(true)
+        socket.user = user
         return next()
       })
     })
@@ -18,37 +19,25 @@ module.exports = function (app, io) {
 
   io.on('connection', socket => {
 
-    models.User.findById(socket._user.id).then(user => {
-      user.touch(true)
-    })
-
     socket.on('getchats', next => {
-      models.User.findById(socket._user.id).then(user => {
-        user.getChats({ include: [{ model: models.User, as: 'Members' }] }).then(chats => {
+      socket.user.getChats({ include: [{ model: models.User, as: 'Members' }] })
+        .then(chats => {
           chats.forEach(chat => {
-            socket.join(chat.uuid, () => {
-              next(chats)
-            })
+            socket.join(chat.uuid, () => next(chats))
           })
         })
-      })
     })
 
     socket.on('createchat', (title, next) => {
-      models.User.findById(socket._user.id).then(user => {
-        user
-          .createChat({ userId: user.id, title, membersCount: 1 })
-          .then(chat => socket.join(chat.uuid, () => next(chat)))
-      })
+      let user = socket.user
+      user
+        .createChat({ userId: user.id, title, membersCount: 1 })
+        .then(chat => socket.join(chat.uuid, () => next(chat)))
     })
 
     socket.on('joinroom', (uuid, next) => {
-      let findingChat = models.Chat.findOne({ where: { uuid } })
-      let findingUser = models.User.findById(socket._user.id)
-
-      Promise.all([findingChat, findingUser]).then(values => {
-        let chat = values[0]
-        let user = values[1]
+      let user = socket.user
+      models.Chat.findOne({ where: { uuid } }).then(chat => {
         chat.addMembers([user])
           .then(() => chat.increment('membersCount'))
           .then(() => socket.join(chat.uuid, () => {
@@ -65,6 +54,7 @@ module.exports = function (app, io) {
     })
 
     socket.on('sendmessage', (uuid, message) => {
+      let user = socket.user
       models.Chat.findOne({ where: { uuid } })
         .then(chat => chat.touch().save())
         .then(chat => {
@@ -73,8 +63,8 @@ module.exports = function (app, io) {
               text: message,
               chatID: chat.uuid,
               sender: {
-                id: socket._user.id,
-                login: socket._user.login
+                id: user.id,
+                login: user.login
               },
               type: 'human'
             }))
@@ -82,9 +72,7 @@ module.exports = function (app, io) {
     })
 
     socket.on('disconnect', () => {
-      models.User.findById(socket._user.id).then(user => {
-        user.touch(false)
-      })
+      socket.user.touch(false)
     })
   })
 
