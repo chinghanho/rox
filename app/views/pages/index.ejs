@@ -112,10 +112,20 @@
           </div>
         </div>
         <div class="chat-settings" v-else>
-          <div v-if="activeChat">
+          <div class="inner" v-if="activeChat">
             <div class="head">
               <div @click="chatSettingsOpened = !chatSettingsOpened">
                 <span class="oi" data-glyph="chevron-left"></span> Back
+              </div>
+            </div>
+
+            <div class="body">
+              <h3 class="members-heading">Members:</h3>
+              <div class="members">
+                <div class="member-item" v-for="member in activeChat.Members">
+                  <div class="member-login">{{ member.login }}</div>
+                  <div class="member-timestamp">{{ member.lastSeenAt }}</div>
+                </div>
               </div>
             </div>
           </div>

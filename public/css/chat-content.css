@@ -34,3 +34,30 @@
   position: relative;
   margin-top: auto;
 }
+
+
+/* Settings */
+
+.panel-chats .main .chat-settings .body {
+  padding: 25px;
+}
+
+.panel-chats .main .chat-settings .members-heading {
+  font-weight: bold;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.panel-chats .main .chat-settings .member-item {
+  margin-bottom: 10px;
+}
+
+.panel-chats .main .chat-settings .member-login {
+  font-size: 14px;
+  color: #000;
+}
+
+.panel-chats .main .chat-settings .member-timestamp {
+  font-size: 13px;
+  color: #969696;
+}
